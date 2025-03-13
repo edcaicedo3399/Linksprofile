@@ -1,12 +1,9 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/lib/db";
 
-export async function GET(
-    req: NextRequest,
-    { params }: { params: { username: string } }
-) {
+export async function GET(req: NextRequest) {
   try {
-    const username = params.username;
+    const username = req.nextUrl.pathname.split("/").pop(); // Extrae el username de la URL
 
     if (!username) {
       return NextResponse.json(
@@ -28,8 +25,10 @@ export async function GET(
 
     return NextResponse.json(user);
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+
     return NextResponse.json(
-        { message: "Error getting user", error: error },
+        { message: "Error getting user", error: errorMessage },
         { status: 500 }
     );
   }
